@@ -1,0 +1,4 @@
+/homework_01/.venv/
+*/.venv/
+/homework_01/log/nginx-access-ui.log-20170630.gz
+.idea
