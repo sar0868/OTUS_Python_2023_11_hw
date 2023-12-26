@@ -3,7 +3,7 @@
 
 Скрипт для анализа лог файлов nginx.  
 Запуск скрипта:  
-`python log_analyzer --config <file_config>`  
+`python log_analyzer.py --config <file_config>`  
 file_config - файл конфигурации лог файла:  
  - REPORT_SIZE - количество строк отчета
  - REPORT_DIR - директория файлов отчетов
