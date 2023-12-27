@@ -105,9 +105,17 @@ def two_pair(ranks) -> list[int] | None:
 
 def best_hand(hand) -> list[str]:
     """Из "руки" в 7 карт возвращает лучшую "руку" в 5 карт """
-    hand = iter(sorted(hand, reverse=True))
-    result = [next(hand) for _ in range(5)]
-    return result
+    best = ([], [0, 0, 0])
+    for current in itertools.combinations(hand, 5):
+        current_rank = hand_rank(current)
+        if current_rank[0] > best[1][0]:
+            best = (current, current_rank)
+        elif current_rank[0] == best[1][0] and current_rank[1] > best[1][1]:
+            best = (current, current_rank)
+        elif current_rank[0] == best[1][0] and current_rank[1] == best[1][1]\
+                and current_rank[-1] > best[1][-1]:
+            best = (current, current_rank)
+    return best[0]
 
 
 def best_wild_hand(hand) -> list[str]:
@@ -180,12 +188,12 @@ def test_two_pair_None():
 
 
 if __name__ == '__main__':
-    test_kind()
-    test_kind_None()
-    test_flush()
-    test_card_ranks()
-    test_two_pair()
-    test_two_pair_None()
-    test_straight()
+    # test_kind()
+    # test_kind_None()
+    # test_flush()
+    # test_card_ranks()
+    # test_two_pair()
+    # test_two_pair_None()
+    # test_straight()
     test_best_hand()
-    # test_best_wild_hand()
+    test_best_wild_hand()
