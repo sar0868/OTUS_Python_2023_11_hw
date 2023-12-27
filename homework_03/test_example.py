@@ -19,11 +19,23 @@ def test_method_request():
     print(temp.is_admin)
 
 
+def test_incorrect_request():
+    arguments = {"phone": "79175002040", "email": "stupnikov@otus.ru", "gender": 1, "birthday": "01.01.2000", "first_name": 1},
+    requests = [
+        ({"login": "admin", "token": "", "method": "online_score", "arguments": arguments}, api.OK),
+        ({"account": "horns&hoofs", "token": "", "method": "online_score", "arguments": arguments}, api.INVALID_REQUEST),
+        ({"account": "horns&hoofs", "login": "admin", "token": "",
+          "method": "online_score", "arguments": arguments}, api.OK),
+                ]
+    for request in requests:
+        response = api.MethodRequest(request[0])
+        assert response.code == request[1], response.code
 
+test_incorrect_request()
 # test_method_request()
-datatemp = api.DateField(required=False, nullable=True, field=datetime.date(2022,12,25))
-print(datatemp._field)
-datatemp.validate()
+# datatemp = api.DateField(required=False, nullable=True, field=datetime.date(2022,12,25))
+# print(datatemp._field)
+# datatemp.validate()
 # test_valid_email()
 # class A:
 #     def __init__(self, name):

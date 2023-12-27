@@ -98,9 +98,6 @@ class DateField(CharField):
         else:
             print("no")
 
-
-
-
         # return regexp.search(self._field) or self._field is None
 
 
@@ -141,6 +138,12 @@ class MethodRequest(object):
     method = CharField(required=True, nullable=True)  # может быть пустым
 
     def __init__(self, request):
+        self.code = OK
+        self._response = None
+        self._error = None
+        if self._check_invalid_request(request):
+            return
+
         for k, v in request.items():
             # setattr(self, k, v)
             if hasattr(self, k):
@@ -158,6 +161,13 @@ class MethodRequest(object):
     # # проверить есть ли поле запроса в классе и если есть заполнить его,
     # # если данные не валидны -> исключение
     #
+    def _check_invalid_request(self, request):
+        if len({'login', 'token', 'arguments', 'method'} - set(request)) > 0:
+            self.code = INVALID_REQUEST
+            self._error = ERRORS.get(self.code)
+            return True
+        return False
+
     @property
     def is_admin(self):
         return self.login == ADMIN_LOGIN
@@ -165,11 +175,13 @@ class MethodRequest(object):
     #
     @property
     def response(self):
-        response = {"score": self.__response}
-        return {"code": self.code, "response": response}
+        if self._error:
+            response = {"score": self._response}
+            return {"code": self.code, "response": response}
+        return {"code": self.code, "error": self._error}
 
     def create_response(self):
-        self.__response = ""
+        self._response = ""
 
 
 def check_auth(request):
@@ -183,7 +195,7 @@ def check_auth(request):
 
 
 def method_handler(request, ctx, store):
-    request = MethodRequest(request)
+    request = MethodRequest(request.get('body'))
 
     response, code = request.response, request.code
     return response, code
