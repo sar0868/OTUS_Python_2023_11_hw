@@ -120,7 +120,18 @@ def best_hand(hand) -> list[str]:
 
 def best_wild_hand(hand) -> list[str]:
     """best_hand но с джокерами"""
-    return
+    joker_substitution = '23456789TJQKA'
+    if '?B' in hand:
+        black_joker = itertools.product(joker_substitution, 'CS')
+        hand.remove('?B')
+        black_joker = [i for i in ["".join(el) for el in black_joker] if i not in hand]
+        hand.extend(black_joker)
+    if '?R' in hand:
+        red_joker = itertools.product(joker_substitution, 'HD')
+        hand.remove('?R')
+        red_joker = [i for i in ["".join(el) for el in red_joker] if i not in hand]
+        hand.extend(red_joker)
+    return best_hand(hand)
 
 
 def test_best_hand():
@@ -188,12 +199,12 @@ def test_two_pair_None():
 
 
 if __name__ == '__main__':
-    # test_kind()
-    # test_kind_None()
-    # test_flush()
-    # test_card_ranks()
-    # test_two_pair()
-    # test_two_pair_None()
-    # test_straight()
+    test_kind()
+    test_kind_None()
+    test_flush()
+    test_card_ranks()
+    test_two_pair()
+    test_two_pair_None()
+    test_straight()
     test_best_hand()
     test_best_wild_hand()
