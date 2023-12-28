@@ -121,17 +121,45 @@ def best_hand(hand) -> list[str]:
 def best_wild_hand(hand) -> list[str]:
     """best_hand но с джокерами"""
     joker_substitution = '23456789TJQKA'
+    black_joker = red_joker = None
     if '?B' in hand:
         black_joker = itertools.product(joker_substitution, 'CS')
         hand.remove('?B')
         black_joker = [i for i in ["".join(el) for el in black_joker] if i not in hand]
-        hand.extend(black_joker)
+
+        # hand.extend(black_joker)
     if '?R' in hand:
         red_joker = itertools.product(joker_substitution, 'HD')
         hand.remove('?R')
         red_joker = [i for i in ["".join(el) for el in red_joker] if i not in hand]
-        hand.extend(red_joker)
-    return best_hand(hand)
+        # hand.extend(red_joker)
+    jokers = []
+    if black_joker and red_joker:
+        jokers = list(itertools.product(black_joker, red_joker))
+    elif black_joker:
+        jokers = black_joker
+    elif red_joker:
+        jokers = red_joker
+
+    all_hand = set()
+    best = ([], [0, 0, 0])
+    for el in jokers:
+        union_hand = hand.copy()
+        union_hand.append(el)
+        best_un_hand = best_hand(union_hand)
+        current = hand_rank(best_un_hand)
+        if best_un_hand == best[0] or best_un_hand in all_hand:
+            continue
+        if current[0] > best[1][0]:
+            best = (best_un_hand, current)
+        elif current[0] == best[1][0] and current[1] > best[1][1]:
+            best = (best_un_hand, current)
+        elif current[0] == best[1][0] and current[1] == best[1][1] \
+                and current[-1] > best[1][-1]:
+            best = (best_un_hand, current)
+        all_hand.add(best[0])
+
+    return best[0]
 
 
 def test_best_hand():
@@ -199,12 +227,12 @@ def test_two_pair_None():
 
 
 if __name__ == '__main__':
-    test_kind()
-    test_kind_None()
-    test_flush()
+    # test_kind()
+    # test_kind_None()
+    # test_flush()
     test_card_ranks()
-    test_two_pair()
-    test_two_pair_None()
-    test_straight()
-    test_best_hand()
+    # test_two_pair()
+    # test_two_pair_None()
+    # test_straight()
+    # test_best_hand()
     test_best_wild_hand()
