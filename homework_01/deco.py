@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import itertools
-from functools import update_wrapper, reduce
+from functools import update_wrapper, reduce, wraps
 
 
 def disable():
@@ -25,14 +25,17 @@ def decorator():
 
 def countcalls(func):
     '''Decorator that counts calls made to the function decorated.'''
+
     count = 0
+    @wraps(func)
     def wrapper(*args, **kwargs):
-
+        global count
         print('countcalls')
-
-        print(len(args))
+        # print(len(args))
+        count += 1
+        print(count)
         return func(*args, **kwargs)
-
+    print(count)
     return wrapper
 
 
