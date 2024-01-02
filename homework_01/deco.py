@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from functools import update_wrapper
+import itertools
+from functools import update_wrapper, reduce
 
 
 def disable():
@@ -23,9 +23,17 @@ def decorator():
     return
 
 
-def countcalls():
+def countcalls(func):
     '''Decorator that counts calls made to the function decorated.'''
-    return
+    count = 0
+    def wrapper(*args, **kwargs):
+
+        print('countcalls')
+
+        print(len(args))
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 def memo():
@@ -36,12 +44,15 @@ def memo():
     return
 
 
-def n_ary():
+def n_ary(func):
     '''
     Given binary function f(x, y), return an n_ary function such
     that f(x, y, z) = f(x, f(y,z)), etc. Also allow f(x) = x.
     '''
-    return
+    def wrapper(*args):
+        print('n_ary')
+        return reduce(func, args)
+    return wrapper
 
 
 def trace():
@@ -67,26 +78,26 @@ def trace():
     return
 
 
-@memo
+# @memo
 @countcalls
 @n_ary
 def foo(a, b):
     return a + b
 
 
-@countcalls
-@memo
-@n_ary
-def bar(a, b):
-    return a * b
-
-
-@countcalls
-@trace("####")
-@memo
-def fib(n):
-    """Some doc"""
-    return 1 if n <= 1 else fib(n-1) + fib(n-2)
+# @countcalls
+# @memo
+# @n_ary
+# def bar(a, b):
+#     return a * b
+#
+#
+# @countcalls
+# @trace("####")
+# @memo
+# def fib(n):
+#     """Some doc"""
+#     return 1 if n <= 1 else fib(n-1) + fib(n-2)
 
 
 def main():
@@ -106,4 +117,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+    print(foo(2, 3,  4))
