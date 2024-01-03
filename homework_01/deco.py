@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import itertools
-from functools import update_wrapper, reduce, wraps
+import functools
+from functools import update_wrapper, wraps
 
+count = {}
 
 def disable():
     '''
@@ -26,16 +27,17 @@ def decorator():
 def countcalls(func):
     '''Decorator that counts calls made to the function decorated.'''
 
-    count = 0
+    # count[func.__name__] = 0
+    count = {}
     @wraps(func)
     def wrapper(*args, **kwargs):
-        global count
-        print('countcalls')
-        # print(len(args))
-        count += 1
-        print(count)
+        # count[func.__name__] += 1
+        # print(count[func.__name__])
+        count[func] = count.get(func, 0) + 1
+        # wrapper.count += 1
+        print(f'Функция {func.__name__} вызвана {count[func]} раз ')
         return func(*args, **kwargs)
-    print(count)
+    wrapper.count = 0
     return wrapper
 
 
@@ -53,8 +55,11 @@ def n_ary(func):
     that f(x, y, z) = f(x, f(y,z)), etc. Also allow f(x) = x.
     '''
     def wrapper(*args):
-        print('n_ary')
-        return reduce(func, args)
+        # print('n_ary')
+        value = args[0]
+        for i in args[1:]:
+            value = func(value, i)
+        return value
     return wrapper
 
 
@@ -82,8 +87,8 @@ def trace():
 
 
 # @memo
-@countcalls
 @n_ary
+@countcalls
 def foo(a, b):
     return a + b
 
@@ -121,4 +126,4 @@ def main():
 
 if __name__ == '__main__':
     # main()
-    print(foo(2, 3,  4))
+    print(foo(2, 3, 4))
