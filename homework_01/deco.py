@@ -5,6 +5,7 @@ from functools import update_wrapper, wraps
 
 count = {}
 
+
 def disable():
     '''
     Disable a decorator by re-assigning the decorator's name
@@ -26,27 +27,29 @@ def decorator():
 
 def countcalls(func):
     '''Decorator that counts calls made to the function decorated.'''
-
-    # count[func.__name__] = 0
-    count = {}
     @wraps(func)
     def wrapper(*args, **kwargs):
-        # count[func.__name__] += 1
-        # print(count[func.__name__])
-        count[func] = count.get(func, 0) + 1
-        # wrapper.count += 1
-        print(f'Функция {func.__name__} вызвана {count[func]} раз ')
+        wrapper.calls += 1
         return func(*args, **kwargs)
-    wrapper.count = 0
+    wrapper.calls = 0
     return wrapper
 
 
-def memo():
+def memo(func):
     '''
     Memoize a function so that it caches all return values for
     faster future lookups.
     '''
-    return
+    cache = {}
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        cache_key = args + tuple(kwargs.items())
+        if cache_key not in cache:
+            cache[cache_key] = func(*args, **kwargs)
+        return cache[cache_key]
+
+    return wrapper
 
 
 def n_ary(func):
@@ -55,7 +58,6 @@ def n_ary(func):
     that f(x, y, z) = f(x, f(y,z)), etc. Also allow f(x) = x.
     '''
     def wrapper(*args):
-        # print('n_ary')
         value = args[0]
         for i in args[1:]:
             value = func(value, i)
@@ -63,7 +65,7 @@ def n_ary(func):
     return wrapper
 
 
-def trace():
+def trace(zz):
     '''Trace calls made to function decorated.
 
     @trace("____")
@@ -83,29 +85,32 @@ def trace():
      <-- fib(3) == 3
 
     '''
-    return
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return f'{zz*func.calls} {func.__name__}'
+    return wrapper
 
 
-# @memo
-@n_ary
 @countcalls
+@memo
+@n_ary
 def foo(a, b):
     return a + b
 
 
-# @countcalls
-# @memo
-# @n_ary
-# def bar(a, b):
-#     return a * b
-#
-#
-# @countcalls
-# @trace("####")
-# @memo
-# def fib(n):
-#     """Some doc"""
-#     return 1 if n <= 1 else fib(n-1) + fib(n-2)
+@countcalls
+@memo
+@n_ary
+def bar(a, b):
+    return a * b
+
+
+@countcalls
+@trace("####")
+@memo
+def fib(n):
+    """Some doc"""
+    return 1 if n <= 1 else fib(n-1) + fib(n-2)
 
 
 def main():
@@ -125,5 +130,5 @@ def main():
 
 
 if __name__ == '__main__':
-    # main()
-    print(foo(2, 3, 4))
+    main()
+    # print(foo(2, 3, 4))
