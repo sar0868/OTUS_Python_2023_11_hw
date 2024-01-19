@@ -85,10 +85,19 @@ def trace(zz):
      <-- fib(3) == 3
 
     '''
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        return f'{zz*func.calls} {func.__name__}'
-    return wrapper
+
+    def inner(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            wrapper.count += 1
+            print(f'{zz*wrapper.count} --> {func.__name__}({args[0]}) ')
+            res = func(*args, **kwargs)
+
+            return res
+        wrapper.count = 0
+        return wrapper
+
+    return inner
 
 
 @countcalls
