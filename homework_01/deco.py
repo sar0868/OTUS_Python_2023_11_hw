@@ -89,9 +89,13 @@ def trace(zz):
     def inner(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            wrapper.count += 1
             print(f'{zz*wrapper.count} --> {func.__name__}({args[0]}) ')
+            wrapper.count += 1
             res = func(*args, **kwargs)
+            if res:
+                wrapper.count -= 1
+                print(
+                    f'{zz*wrapper.count} <-- {func.__name__}({args[0]}) == {res}')
 
             return res
         wrapper.count = 0

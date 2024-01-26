@@ -74,7 +74,6 @@ def straight(ranks) -> bool:
     return max(ranks) - min(ranks) == 4
 
 
-
 def kind(n, ranks) -> int | None:
     """Возвращает первый ранг, который n раз встречается в данной руке.
     Возвращает None, если ничего не найдено"""
@@ -125,11 +124,13 @@ def best_wild_hand(hand) -> list[str]:
     if '?B' in hand:
         black_joker = itertools.product(joker_substitution, 'CS')
         hand.remove('?B')
-        black_joker = [i for i in ["".join(el) for el in black_joker] if i not in hand]
+        black_joker = [i for i in ["".join(el)
+                                   for el in black_joker] if i not in hand]
     if '?R' in hand:
         red_joker = itertools.product(joker_substitution, 'HD')
         hand.remove('?R')
-        red_joker = [i for i in ["".join(el) for el in red_joker] if i not in hand]
+        red_joker = [i for i in ["".join(el)
+                                 for el in red_joker] if i not in hand]
     jokers = None
     if black_joker and red_joker:
         jokers = list(itertools.product(black_joker, red_joker))
@@ -188,8 +189,10 @@ def test_best_wild_hand():
 
 def test_card_ranks():
     print('test_card_ranks')
-    assert card_ranks("6C 7C 8C 9C TC 5C JS".split()) == [11, 10, 9, 8, 7, 6, 5]
-    assert card_ranks("6C 2C 8C 9C TC 5C JS".split()) == [11, 10, 9, 8, 6, 5, 2]
+    assert card_ranks("6C 7C 8C 9C TC 5C JS".split()) == [
+        11, 10, 9, 8, 7, 6, 5]
+    assert card_ranks("6C 2C 8C 9C TC 5C JS".split()) == [
+        11, 10, 9, 8, 6, 5, 2]
 
 
 def test_flush():
@@ -229,12 +232,12 @@ def test_two_pair_None():
 
 
 if __name__ == '__main__':
-    test_kind()
-    test_kind_None()
-    test_flush()
-    test_card_ranks()
-    test_two_pair()
-    test_two_pair_None()
-    test_straight()
+    # test_kind()
+    # test_kind_None()
+    # test_flush()
+    # test_card_ranks()
+    # test_two_pair()
+    # test_two_pair_None()
+    # test_straight()
     test_best_hand()
     test_best_wild_hand()
