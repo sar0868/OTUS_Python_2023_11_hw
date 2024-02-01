@@ -105,16 +105,7 @@ def get_filename_for_analysis(filenames):
 
 
 def get_open(name):
-    if name.endswith('.gz'):
-        yield gzip.open(name)
-    else:
-        yield open(name)
-
-
-def get_cat(sources):
-    for s in sources:
-        for item in s:
-            yield item
+    return gzip.open(name) if name.endswith('.gz') else open(name)
 
 
 def gen_grep(lines):
@@ -197,8 +188,8 @@ def main(config: dir):
         logger.info("report file exists")
         return
     logfiles = get_open(filename)
-    loglines = get_cat(logfiles)
-    pathlines = gen_grep(loglines)
+
+    pathlines = gen_grep(logfiles)
     records = parse_line(pathlines)
     result = calculation_report(records, float(config['ERROR_LEVEL']))
     if not result:
