@@ -36,16 +36,23 @@ def read_configure(path):
         "logfile": None,
         # "logfile": "log_analyzer.log",
     }
+
     with open(path) as f:
         for line in f:
-            try:
-                data = line.strip().split('=')
-                if len(data) < 2:
-                    continue
-            except Exception:
-                raise Exception("file don't parser")
-
+            data = line.strip().split('=')
+            if len(data) < 2:
+                continue
+            # except Exception:
+            #     raise Exception("file don't parser")
             config[data[0]] = data[1]
+
+    try:
+        int(config['REPORT_SIZE'])
+    except ValueError:
+        raise ValueError("file don't parser\nREPORT_SIZE don't int")
+
+    if not os.path.isdir(config['LOG_DIR']):
+        raise TypeError(f"file don't parser\ndirectory {config['LOG_DIR']} don't exist")
 
     return config
 
@@ -167,6 +174,8 @@ def create_report(date_log: str, result, path):
         with open('report.html') as file, open(filename, 'w') as report:
             template = Template(file.read())
             report.write(template.safe_substitute(table_json=json.dumps(data_report)))
+    except FileNotFoundError as e:
+        logger.exception(e)
     except OSError:
         os.remove(filename)
         logger.error("file report don't create")
