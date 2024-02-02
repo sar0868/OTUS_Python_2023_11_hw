@@ -1,0 +1,14 @@
+[2024.02.02 13:48:44] I start script
+[2024.02.02 13:48:44] I find last file nginx-access-ui.log-20170630.gz
+[2024.02.02 13:49:07] I file report name='report-2017.06.30.html' create
+[2024.02.02 13:49:08] I end script
+[2024.02.02 13:51:08] I start script
+[2024.02.02 13:51:08] I find last file nginx-access-ui.log-20170630.gz
+[2024.02.02 13:51:08] I last date report file: 20170630
+[2024.02.02 13:51:08] I report file exists
+[2024.02.02 13:51:08] I end script
+[2024.02.02 13:52:21] I start script
+[2024.02.02 13:52:21] I find last file nginx-access-ui.log-20170630.gz
+[2024.02.02 13:52:21] I last date report file: 20170630
+[2024.02.02 13:52:21] I report file exists
+[2024.02.02 13:52:21] I end script

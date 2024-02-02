@@ -7,7 +7,6 @@ import logging
 import os
 import re
 import statistics
-import sys
 import argparse
 from pathlib import Path
 from string import Template
@@ -34,6 +33,7 @@ def read_configure(path):
         "REPORT_DIR": "./reports",
         "LOG_DIR": "./log",
         "logfile": None,
+        "ERROR_LEVEL": 5.0
         # "logfile": "log_analyzer.log",
     }
 
@@ -48,11 +48,14 @@ def read_configure(path):
 
     try:
         int(config['REPORT_SIZE'])
+        float(config['ERROR_LEVEL'])
     except ValueError:
-        raise ValueError("file don't parser\nREPORT_SIZE don't int")
+        raise ValueError(
+            "file don't parser\nREPORT_SIZE or ERROR_LEVEL don't numbers")
 
     if not os.path.isdir(config['LOG_DIR']):
-        raise TypeError(f"file don't parser\ndirectory {config['LOG_DIR']} don't exist")
+        raise TypeError(
+            f"file don't parser\ndirectory {config['LOG_DIR']} don't exist")
 
     return config
 
@@ -68,7 +71,7 @@ def create_logger(path: str):
 
 
 def gen_find(filepath, top):
-    for path, dirlist, filelist in os.walk(top):
+    for path, _, filelist in os.walk(top):
         for name in fnmatch.filter(filelist, filepath):
             yield os.path.join(path, name)
 
@@ -173,14 +176,16 @@ def create_report(date_log: str, result, path):
     try:
         with open('report.html') as file, open(filename, 'w') as report:
             template = Template(file.read())
-            report.write(template.safe_substitute(table_json=json.dumps(data_report)))
+            report.write(template.safe_substitute(
+                table_json=json.dumps(data_report)))
     except FileNotFoundError as e:
         logger.exception(e)
     except OSError:
         os.remove(filename)
         logger.error("file report don't create")
     else:
-        logger.info("file report name='%s' create" % str(filename).rsplit('/')[-1])
+        logger.info("file report name='%s' create" %
+                    str(filename).rsplit('/')[-1])
 
 
 def main(config: dir):
@@ -205,7 +210,8 @@ def main(config: dir):
         logger.error("error level exceeded")
         return
     date_report_file = get_date_logfile(filename)
-    date_file = '%s.%s.%s' % (date_report_file[:4], date_report_file[4:6], date_report_file[6:])
+    date_file = '%s.%s.%s' % (
+        date_report_file[:4], date_report_file[4:6], date_report_file[6:])
     create_report(date_file,
                   sorted(result.items(),
                          key=lambda el: el[1].time_sum, reverse=True)[:int(config['REPORT_SIZE'])],
@@ -218,7 +224,8 @@ if __name__ == "__main__":
     if namespace.config:
         config = read_configure(namespace.config)
     else:
-        raise Exception("couldn't find the configuration file")
+        config = read_configure("config")
+        # raise Exception("couldn't find the configuration file")
     logger = create_logger(config["logfile"])
     logger.info("start script")
 
