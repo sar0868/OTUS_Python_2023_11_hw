@@ -2,7 +2,7 @@ name: Pylint
 
 on:
   push:
-    branches: [ "homework_01"]
+    branches: ["homework_01"]
 
 jobs:
   build:
