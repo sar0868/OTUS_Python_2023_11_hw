@@ -1,0 +1,20 @@
+[MAIN]
+disable=C0116,
+        C0115,
+        C0114,
+        C0301,
+        W0621,
+        W0707,
+        C0209,
+        W1201,
+        C0207,
+        W1514,
+        E0601,
+        C0123,
+        R1735,
+        R1710,
+
+ignore-patterns=deco.py,
+                poker.py, 
+                data.py,
+
