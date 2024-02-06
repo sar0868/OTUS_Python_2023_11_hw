@@ -144,6 +144,13 @@ class MethodRequest(object):
         if self._check_invalid_request(request):
             return
 
+        request['is_admin'] = self.is_admin
+
+        if not check_auth(request):
+            self.code = FORBIDDEN
+            self._error = ERRORS.FORBIDDEN
+            return
+
         for k, v in request.items():
             # setattr(self, k, v)
             if hasattr(self, k):
