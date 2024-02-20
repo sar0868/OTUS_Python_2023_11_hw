@@ -38,8 +38,6 @@ GENDERS = {
 
 
 class CharField(object):
-    # __slots__ = ('required', 'nullable', '__field')
-
     def __init__(self, required: bool, nullable: bool, field: str = None):
         self.nullable: bool = nullable
         self.required: bool = required
@@ -135,16 +133,17 @@ class MethodRequest(object):
     login = CharField(required=True, nullable=True)
     token = CharField(required=True, nullable=True)
     arguments = ArgumentsField(required=True, nullable=True)
-    method = CharField(required=True, nullable=True)  # может быть пустым
+    method = CharField(required=True, nullable=True)
 
     def __init__(self, request):
+        self.request = request
         self.code = OK
         self._response = None
         self._error = None
         if self._check_invalid_request(request):
             return
 
-        request['is_admin'] = self.is_admin
+        request['is_admin'] = self.is_admin # нужно чтобы в dict был request.is_admin
 
         if not check_auth(request):
             self.code = FORBIDDEN
@@ -177,7 +176,7 @@ class MethodRequest(object):
 
     @property
     def is_admin(self):
-        return self.login == ADMIN_LOGIN
+        return self.request['login'] == ADMIN_LOGIN
 
     #
     @property
