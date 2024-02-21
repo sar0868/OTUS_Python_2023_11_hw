@@ -11,7 +11,7 @@ def test_valid_email():
 
 def test_method_request():
     arguments = {"phone": "79175002040", "email": "stupnikov@otus.ru", "gender": 1, "birthday": "01.01.2000", "first_name": 1},
-    request = {"account": "horns&hoofs", "login": "admin", "method": "online_score", "arguments": arguments}
+    request = {"account": "horns&hoofs", "login": "admin", "method": "online_score", "token": '', "arguments": arguments}
     temp = api.MethodRequest(request)
     # assert temp.login == "admin"
     print(temp.arguments)
@@ -31,8 +31,8 @@ def test_incorrect_request():
         response = api.MethodRequest(request[0])
         assert response.code == request[1], response.code
 
-test_incorrect_request()
-# test_method_request()
+# test_incorrect_request()
+test_method_request()
 # datatemp = api.DateField(required=False, nullable=True, field=datetime.date(2022,12,25))
 # print(datatemp._field)
 # datatemp.validate()

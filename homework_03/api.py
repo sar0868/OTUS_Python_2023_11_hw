@@ -168,7 +168,7 @@ class MethodRequest(object):
     # # если данные не валидны -> исключение
     #
     def _check_invalid_request(self, request):
-        if len({'login', 'token', 'arguments', 'method'} - set(request)) > 0:
+        if not request:
             self.code = INVALID_REQUEST
             self._error = ERRORS.get(self.code)
             return True
