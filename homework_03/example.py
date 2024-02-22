@@ -10,28 +10,35 @@ class CharField(object):
         return self._field
 
     def __set__(self, instance, value):
-        if len(value) < 3:
-            raise ValueError
-        self._field = value
+        # if self.validate():
+        #     raise ValueError
+        setattr(instance, self._field, value)
 
-    # def validate(self):
-    #     if se
-    #
-    #     return isinstance(self._field, str)
+    def validate(self):
+        return self == "qqqq"
 
 class Exampl:
     obj1 = CharField(required=True, nullable=False)
 
-    def __init__(self, value):
-        self.obj1 = value
+    # def __init__(self, value):
+    #     self.obj1 = value
+    #     print(self.obj1)
+        # if self.obj1.validate():
+        #     print("ok")
+        # else:
+        #     print("no")
 
 
-temp1 = Exampl('sss')
+temp1 = Exampl()
 print(temp1.__dict__)
-
-print(temp1.__dict__)
+# field = CharField(required=True, nullable=False, field="eee")
+# print(field)
+temp1.obj1 = "hii1"
 print(temp1.obj1)
-temp1.is_admin  = False
+print(type(temp1.obj1))
+temp1.is_admin = False
 print(temp1.__dict__)
 print(temp1.is_admin)
+
+
 

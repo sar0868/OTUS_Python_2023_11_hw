@@ -44,13 +44,15 @@ class CharField(object):
         self._field: str = field
 
     def __get__(self, instance, owner):
-        return self._field
+        return self
 
     def __set__(self, instance, value):
+        if not self.validate(value):
+            raise ValueError
         self._field = value
 
-    def validate(self):
-        return isinstance(self._field, str)
+    def validate(self, value):
+        return isinstance(value, str)
 
     def __eq__(self, other):
         if isinstance(other, CharField):
@@ -77,21 +79,21 @@ class ArgumentsField:
 
 class EmailField(CharField):
 
-    def validate(self):
+    def validate(self, value):
         regexp = re.compile('@')
-        return regexp.search(self._field)
+        return regexp.search(value)
 
 
 class PhoneField(CharField):
-    def validate(self):
+    def validate(self, value):
         regexp = re.compile("^['7',7]\w{10}")
-        return regexp.search(self._field) or self._field is None
+        return regexp.search(value) or value is None
 
 
 class DateField(CharField):
-    def validate(self):
-        if isinstance(self._field, datetime.datetime):
-            if datetime.datetime.now() - datetime.timedelta(self._field.year) <= 70:
+    def validate(self, value):
+        if isinstance(value, datetime.datetime):
+            if datetime.datetime.now() - datetime.timedelta(value.year) <= 70:
                 print("ok")
         else:
             print("no")
@@ -143,17 +145,14 @@ class MethodRequest(object):
         if self._check_invalid_request(request):
             return
 
-        request['is_admin'] = self.is_admin # нужно чтобы в dict был request.is_admin
-
-        if not check_auth(request):
-            self.code = FORBIDDEN
-            self._error = ERRORS.FORBIDDEN
-            return
+        # request['is_admin'] = self.is_admin # нужно чтобы в dict был request.is_admin
 
         for k, v in request.items():
             # setattr(self, k, v)
             if hasattr(self, k):
                 setattr(self, k, v)
+                if k == "login":
+                    setattr(self.login, 'is_admin', self.login == 'admin')
                 # if k == "arguments":
                 #     setattr(self, k, v)
                 # else:
@@ -162,6 +161,11 @@ class MethodRequest(object):
                 # attr = getattr(self, k)
                 # if not attr.is_valid():
                 #     self.code = BAD_REQUEST
+
+        if not check_auth(request):
+            self.code = FORBIDDEN
+            self._error = ERRORS.FORBIDDEN
+            return
 
     #
     # # проверить есть ли поле запроса в классе и если есть заполнить его,
