@@ -44,7 +44,7 @@ class CharField(object):
         self._field: str = field
 
     def __get__(self, instance, owner):
-        return self
+        return getattr(instance, self._field, owner)
 
     def __set__(self, instance, value):
         if not self.validate(value):
